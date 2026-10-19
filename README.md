@@ -1,36 +1,38 @@
-# Docker Telegram Bot Template
+# Docker + Telegram Bot Template
 
-A minimal, Dockerized [aiogram 3](https://docs.aiogram.dev/) Telegram bot template.
+aiogram 3 asosidagi Telegram bot, Docker konteynerda ishlaydi.
 
-## Structure
+## Imkoniyatlar
 
-```
-├── bot/
-│   ├── config.py          # loads BOT_TOKEN from .env
-│   ├── dispatcher.py      # aiogram Dispatcher instance
-│   └── handlers/
-│       ├── __init__.py    # registers handler modules
-│       └── main.py        # /start handler
-├── main.py                # entrypoint, starts polling
-├── requirements.txt
-├── Dockerfile
-└── docker-compose.yml
+- `/start` — salomlashish va asosiy menyu
+- `/help` yoki "ℹ️ Yordam" tugmasi — yordam
+- "👤 Men haqimda" — foydalanuvchi ma'lumotlari
+- Boshqa matnlarni qaytaradi (echo)
+
+## Docker bilan ishga tushirish
+
+```bash
+cp .env.example .env
 ```
 
-## Setup
+`.env` ichiga bot tokenini yozing:
 
-1. Copy `.env.example` to `.env` and set your bot token (get one from [@BotFather](https://t.me/BotFather)):
+```bash
+docker compose up --build -d
+docker compose logs -f bot
+```
 
-   ```
-   BOT_TOKEN=your-token-here
-   ```
+To'xtatish:
 
-2. Run it:
+```bash
+docker compose down
+```
 
-   ```
-   docker compose up --build
-   ```
+Bot `restart: unless-stopped` bilan ishlaydi, ya'ni xato bo'lsa yoki server qayta yonsa o'zi qayta ishga tushadi.
 
-## Adding handlers
+## Testlar
 
-Add a new module under `bot/handlers/`, import it in `bot/handlers/__init__.py`, and register handlers on the shared `dp` from `bot/dispatcher.py`.
+```bash
+pip install -r requirements.txt
+pytest
+```
