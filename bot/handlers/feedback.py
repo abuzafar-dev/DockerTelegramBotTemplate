@@ -8,6 +8,7 @@ from aiogram.filters import Command, CommandObject, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery, Message
 
+from bot.api import save_feedback
 from bot.keyboards import BTN_FEEDBACK, main_menu, rating_keyboard, skip_keyboard, stars
 from bot.states import FeedbackState
 
@@ -60,14 +61,14 @@ async def rating_not_chosen(message: Message):
 
 @router.callback_query(FeedbackState.comment, F.data == "comment:skip")
 async def comment_skipped(callback: CallbackQuery, state: FSMContext):
-    text = await finish(state, comment="")
+    text = await finish(state, user_id=callback.from_user.id, comment="")
     await callback.message.edit_text(text)
     await callback.answer()
 
 
 @router.message(FeedbackState.comment, F.text)
 async def comment_written(message: Message, state: FSMContext):
-    text = await finish(state, comment=message.text[:1000])
+    text = await finish(state, user_id=message.from_user.id, comment=message.text[:1000])
     await message.answer(text, reply_markup=main_menu)
 
 
@@ -76,11 +77,16 @@ async def comment_not_text(message: Message):
     await message.answer("Izohni matn ko'rinishida yozing yoki «O'tkazib yuborish»ni bosing.")
 
 
-async def finish(state: FSMContext, comment: str) -> str:
+async def finish(state: FSMContext, user_id: int, comment: str) -> str:
     data = await state.get_data()
     await state.clear()
-    # TODO: shu yerda bazaga yoki API ga saqlang (masalan aiohttp bilan POST)
-    lines = ["Rahmat! 🙌", f"Baho: {stars(data['rating'])}"]
+    saved = await save_feedback({
+        "user_id": user_id,
+        "rating": data["rating"],
+        "comment": comment,
+        "source": data.get("source", ""),
+    })
+    lines = ["Rahmat! 🙌" if saved else "Rahmat! Hozir saqlab bo'lmadi, keyinroq qayta urinib ko'ring.", f"Baho: {stars(data['rating'])}"]
     if comment:
         lines.append(f"Izoh: {html.quote(comment)}")
     if data.get("source"):

@@ -1,13 +1,18 @@
-.PHONY: help install run test down logs
+.PHONY: help install run test down logs admin env
 
 help:
-	@echo "make run      — Docker'da ishga tushirish"
+	@echo "make run      — Docker'da ishga tushirish: bot + API + PostgreSQL"
+	@echo "make admin    — admin panel uchun superuser (http://127.0.0.1:8002/admin/)"
 	@echo "make down     — to'xtatish"
 	@echo "make logs     — loglar"
 	@echo "make test     — testlar (Docker'siz)"
 
-run: .env
+env:
+	@python3 scripts/sync_env.py
+
+run: env
 	@grep -q '^BOT_TOKEN=.\+' .env || { echo "XATO: .env faylida BOT_TOKEN bo'sh. @BotFather'dan token olib yozing."; exit 1; }
+	@echo "==> admin: http://127.0.0.1:8002/admin/   statistika: http://127.0.0.1:8002/api/feedback/stats/"
 	docker compose up --build
 
 down:
@@ -15,6 +20,9 @@ down:
 
 logs:
 	docker compose logs -f
+
+admin:
+	docker compose exec web python manage.py createsuperuser
 
 PY := .venv/bin/python
 
@@ -28,10 +36,5 @@ PY := .venv/bin/python
 
 install: .venv/.installed
 
-.env:
-	@cp .env.example .env
-	@sed -i "s|^SECRET_KEY=.*|SECRET_KEY=$$(python3 -c 'import secrets; print(secrets.token_urlsafe(50))')|" .env
-	@echo "==> .env yaratildi (.env.example asosida)"
-
 test: install
-	@bash scripts/ci.sh
+	@POSTGRES_DB= bash scripts/ci.sh
