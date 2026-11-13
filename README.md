@@ -14,6 +14,9 @@ make test    # checks + tests
 - `/start` — salomlashish va asosiy menyu
 - `/help` yoki "ℹ️ Yordam" tugmasi — yordam
 - "👤 Men haqimda" — foydalanuvchi ma'lumotlari
+- "⭐ Baho berish" yoki `/feedback` — **FSM** namunasi: 1–5 yulduz (★★★☆☆) → izoh → natija
+- Deep-link / QR: `https://t.me/<bot>?start=filial_3` → baho so'raladi, `filial_3` manba sifatida saqlanadi
+- `/cancel` — har qanday holatdan chiqish
 - Boshqa matnlarni qaytaradi (echo)
 
 ## Docker bilan ishga tushirish
