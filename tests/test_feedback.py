@@ -70,7 +70,7 @@ def test_full_flow_with_comment(saved):
         await comment_written(message, state)
         text = message.answer.call_args.args[0]
         assert '★★★★☆' in text
-        assert '&lt;b&gt;' in text  # HTML escape
+        assert '&lt;b&gt;' in text
         assert await state.get_state() is None
         assert saved == [{'user_id': 123, 'rating': 4, 'comment': "Zo'r <b>xizmat</b>", 'source': ''}]
 

@@ -19,12 +19,10 @@ main_menu = ReplyKeyboardMarkup(
 
 
 def stars(rating: int) -> str:
-    """3 -> ★★★☆☆ (to'lgan va bo'sh yulduzchalar)"""
     return "★" * rating + "☆" * (5 - rating)
 
 
 def rating_keyboard() -> InlineKeyboardMarkup:
-    # Har bir tugmada nechta yulduz to'lgani ko'rinadi: ★☆☆☆☆ ... ★★★★★
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text=stars(i), callback_data=f"rating:{i}")] for i in range(1, 6)
     ])

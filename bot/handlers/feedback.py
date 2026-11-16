@@ -1,8 +1,3 @@
-"""FSM namunasi: baho (1-5 yulduz) -> izoh -> natija.
-
-Deep-link: https://t.me/<bot>?start=filial_3  ->  /start filial_3
-(QR kod shu havolaga yasaladi, payload qayerdan kelganini bildiradi.)
-"""
 from aiogram import F, Router, html
 from aiogram.filters import Command, CommandObject, CommandStart
 from aiogram.fsm.context import FSMContext
@@ -24,7 +19,6 @@ async def ask_rating(message: Message, state: FSMContext, source: str = ""):
 
 @router.message(CommandStart(deep_link=True))
 async def start_deep_link(message: Message, command: CommandObject, state: FSMContext):
-    # /start <payload> — payload faqat harf/raqam/_/- bo'lsin (64 belgigacha)
     source = (command.args or "")[:64]
     await ask_rating(message, state, source=source)
 
